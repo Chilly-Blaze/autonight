@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">AutoNight</string>
+    <string name="hint_error_title">Error</string>
+    <string name="hint_pending_title">Checking Environment…</string>
+    <string name="hint_success_title">Environment check passed!</string>
+    <string name="hint_sensor_missing_content">Sorry, the app cannot be applied to your phone because the light sensor on your phone was not found…</string>
+    <string name="hint_root_denied_content">Sorry, the phone does not have or you have not granted Root permissions and the app cannot run as expected…</string>
+    <string name="dashboard_enable_title">Running…</string>
+    <string name="dashboard_disable_tile">Stopped</string>
+    <string name="setting_day_hint">Above this, exit night mode</string>
+    <string name="dashboard_threshold_content">"Current threshold(Night/Day): "</string>
+    <string name="setting_night">Night threshold</string>
+    <string name="setting_day">Day threshold</string>
+    <string name="setting_night_hint">Below this, enter night mode</string>
+    <string name="setting_current_hint">Current light</string>
+    <string name="setting_submit_button">Submit!</string>
+    <string name="setting_title">Reset threshold</string>
+    <string name="setting_value_error">Night threshold must be less than Day threshold!</string>
+</resources>
