@@ -33,12 +33,13 @@ sealed class Switch(val title: Int) {
     val container: Pair<Color, Color>
         @Composable
         @ReadOnlyComposable
-        get() = if (this is Enable) colorScheme.tertiaryContainer to colorScheme.secondaryContainer
+        get() = if (this is Enable) colorScheme.secondaryContainer to colorScheme.primaryContainer
         else colorScheme.surface to colorScheme.surface
-    val content: Color
+    val content: Pair<Color, Color>
         @Composable
         @ReadOnlyComposable
-        get() = if (this is Enable) colorScheme.onTertiaryContainer else colorScheme.onSurface
+        get() = if (this is Enable) colorScheme.onSecondaryContainer to colorScheme.onPrimaryContainer
+        else colorScheme.onSurface to colorScheme.onSurface
     val icon: Pair<Int, Color>
         @Composable
         @ReadOnlyComposable
@@ -51,15 +52,15 @@ sealed class Switch(val title: Int) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DashboardCard() {
-    DelayAnimatedVisibility(time = 300) {
+fun DashboardCard(delay: Int) {
+    DelayAnimatedVisibility(time = delay) {
         val remoteController = viewModel<RemoteController>()
         val switch = if (remoteController.persistentData.enable) Switch.Enable else Switch.Disable
         ElevatedCard(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(10.dp, 5.dp),
-            colors = CardDefaults.cardColors(switch.container.first, switch.content),
+            colors = CardDefaults.cardColors(switch.container.first, switch.content.first),
             onClick = { remoteController.modeSwitch(switch != Switch.Enable) }
         ) {
             Row(Modifier.padding(15.dp, 5.dp), verticalAlignment = Alignment.CenterVertically) {
@@ -72,7 +73,12 @@ fun DashboardCard() {
                 Column(Modifier.padding(10.dp)) {
                     Text(text = stringResource(id = switch.title), style = typography.titleMedium)
                     Spacer(modifier = Modifier.height(5.dp))
-                    Card(colors = CardDefaults.cardColors(switch.container.second)) {
+                    Card(
+                        colors = CardDefaults.cardColors(
+                            switch.container.second,
+                            switch.content.second
+                        )
+                    ) {
                         Text(
                             text = stringResource(id = R.string.dashboard_threshold_content) +
                                     "${remoteController.persistentData.night}/${remoteController.persistentData.day}",

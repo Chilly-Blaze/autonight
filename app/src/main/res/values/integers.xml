@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="card_delay_1">300</integer>
+    <integer name="card_delay_2">700</integer>
+    <integer name="card_delay_3">1100</integer>
+</resources>

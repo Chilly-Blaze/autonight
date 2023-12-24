@@ -32,8 +32,8 @@ import com.chillyblaze.autonight.viewmodel.ViewStateController
 import com.chillyblaze.autonight.viewmodel.ViewStateController.DelayAnimatedVisibility
 
 @Composable
-fun SettingCard() {
-    DelayAnimatedVisibility(time = 700) {
+fun SettingCard(delay:Int) {
+    DelayAnimatedVisibility(time = delay) {
         val remoteController: RemoteController = viewModel()
         val toast = Toast.makeText(
             remoteController.getApplication(),

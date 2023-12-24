@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.CardDefaults
@@ -20,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.chillyblaze.autonight.R
@@ -27,7 +29,7 @@ import com.chillyblaze.autonight.tools.EnvState
 import com.chillyblaze.autonight.viewmodel.ViewStateController
 
 @Composable
-fun HintCard() {
+fun EnvironmentCard() {
     AnimatedContent(targetState = ViewStateController.envCheck, label = "") {
         when (it) {
             EnvState.PENDING -> PendingCard()
@@ -35,6 +37,35 @@ fun HintCard() {
             EnvState.ROOT_DENIED -> ErrorCard(content = R.string.hint_root_denied_content)
             EnvState.SUCCESS -> AnimatedVisibility(visible = ViewStateController.hintSuccessShow) { SuccessCard() }
         }
+    }
+}
+
+@Composable
+fun TipsCard(delay: Int) {
+    ViewStateController.DelayAnimatedVisibility(time = delay) {
+        val colors = Colors(
+            MaterialTheme.colorScheme.primaryContainer,
+            MaterialTheme.colorScheme.onPrimaryContainer,
+            MaterialTheme.colorScheme.primary
+        )
+        CardTemplate(
+            colors = colors,
+            icon = R.drawable.ic_tips,
+            title = R.string.hint_tips_title,
+            content = {
+                Column(Modifier.offset(5.dp)) {
+                    stringArrayResource(id = R.array.hint_tips_content).forEach {
+                        Row(verticalAlignment = Alignment.Top) {
+                            Text(text = "●", style = MaterialTheme.typography.bodyMedium)
+                            Spacer(modifier = Modifier.width(5.dp))
+                            Text(text = it, style = MaterialTheme.typography.bodyMedium)
+                        }
+                        Spacer(modifier = Modifier.height(5.dp))
+                    }
+                }
+            },
+            onClick = { ViewStateController.cardList[delay] = false }
+        )
     }
 }
 
@@ -63,7 +94,12 @@ private fun ErrorCard(content: Int) {
         colors = colors,
         icon = R.drawable.ic_error,
         title = R.string.hint_error_title,
-        content = content
+        content = {
+            Text(
+                text = stringResource(id = content),
+                style = MaterialTheme.typography.bodyMedium
+            )
+        }
     )
 }
 
@@ -90,7 +126,7 @@ private fun CardTemplate(
     colors: Colors,
     icon: Int,
     title: Int,
-    content: Int? = null,
+    content: @Composable (() -> Unit)? = null,
     onClick: () -> Unit = {}
 ) {
     ElevatedCard(
@@ -116,10 +152,7 @@ private fun CardTemplate(
                     style = MaterialTheme.typography.titleMedium
                 )
             }
-            content?.let {
-                Spacer(modifier = Modifier.height(10.dp))
-                Text(text = stringResource(id = it), style = MaterialTheme.typography.bodyMedium)
-            }
+            content?.let { Spacer(modifier = Modifier.height(5.dp)); it() }
         }
 
     }

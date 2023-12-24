@@ -16,16 +16,16 @@ object ViewStateController {
     var hintSuccessShow by mutableStateOf(true)
     var settingDay by mutableStateOf("")
     var settingNight by mutableStateOf("")
-    private var cardList = mutableStateMapOf<Long, Boolean>()
+    var cardList = mutableStateMapOf<Int, Boolean>()
 
     @Composable
     fun DelayAnimatedVisibility(
-        time: Long,
+        time: Int,
         content: @Composable AnimatedVisibilityScope.() -> Unit
     ) {
         cardList.putIfAbsent(time, false)
         LaunchedEffect(envCheck == EnvState.SUCCESS) {
-            delay(time)
+            delay(time.toLong())
             cardList[time] = envCheck == EnvState.SUCCESS
         }
         AnimatedVisibility(visible = cardList[time]!!, content = content)
