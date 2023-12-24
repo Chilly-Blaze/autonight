@@ -57,9 +57,7 @@ class RemoteController(application: Application) : AndroidViewModel(application)
         registerReceiver()
         CoroutineScope(Dispatchers.IO).launch {
             if (grantedRoot()) {
-                // init data
                 withContext(Dispatchers.Main) { context().rpc { persistentData = state } }
-                // update state
                 ViewStateController.envCheck = EnvState.SUCCESS
             } else ViewStateController.envCheck = EnvState.ROOT_DENIED
         }

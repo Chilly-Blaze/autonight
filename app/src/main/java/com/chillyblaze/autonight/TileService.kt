@@ -10,7 +10,6 @@ import android.service.quicksettings.Tile.STATE_ACTIVE
 import android.service.quicksettings.Tile.STATE_INACTIVE
 import android.service.quicksettings.Tile.STATE_UNAVAILABLE
 import android.service.quicksettings.TileService
-import android.util.Log
 import com.chillyblaze.autonight.tools.ACTION_DATA_BROADCAST
 import com.chillyblaze.autonight.tools.PersistentState.ENABLE
 import com.chillyblaze.autonight.tools.rpc
@@ -40,7 +39,6 @@ class TileService : TileService() {
         super.onStartListening()
         if (Shell.isAppGrantedRoot() == false) qsTile.state = STATE_UNAVAILABLE
         else rpc { qsTile.state = if (state.enable) STATE_ACTIVE else STATE_INACTIVE }
-        Log.d("TileService", Shell.isAppGrantedRoot().toString())
         qsTile.updateTile()
     }
 

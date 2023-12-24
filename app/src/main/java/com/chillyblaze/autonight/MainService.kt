@@ -64,9 +64,7 @@ class MainService : RootService(), SensorEventListener {
 
     override fun onCreate() {
         super.onCreate()
-        // load data
         persistentData = readPersistentData(persistentData)
-        // bind manager
         sensorManager = getSystemService<SensorManager>()!!
         modeManager = getSystemService<UiModeManager>()!!
     }
