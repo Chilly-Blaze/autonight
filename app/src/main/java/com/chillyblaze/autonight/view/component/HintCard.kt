@@ -56,8 +56,8 @@ fun TipsCard(delay: Int) {
                 Column(Modifier.offset(5.dp)) {
                     stringArrayResource(id = R.array.hint_tips_content).forEach {
                         Row(verticalAlignment = Alignment.Top) {
-                            Text(text = "●", style = MaterialTheme.typography.bodyMedium)
-                            Spacer(modifier = Modifier.width(5.dp))
+                            Text(text = "◦", style = MaterialTheme.typography.bodyMedium)
+                            Spacer(modifier = Modifier.width(3.dp))
                             Text(text = it, style = MaterialTheme.typography.bodyMedium)
                         }
                         Spacer(modifier = Modifier.height(5.dp))

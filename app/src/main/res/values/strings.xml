@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">AutoNight</string>
+    <string name="app_name" translatable="false">AutoNight</string>
     <string name="hint_error_title">Error</string>
     <string name="hint_pending_title">Checking Environment…</string>
     <string name="hint_success_title">Environment check passed!</string>

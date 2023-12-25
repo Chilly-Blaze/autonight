@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="hint_error_title">出错啦</string>
+    <string name="hint_pending_title">正在检查环境…</string>
+    <string name="hint_success_title">环境检查通过！</string>
+    <string name="hint_sensor_missing_content">抱歉，由于设备缺少光照传感器或相关部件，该程序无法应用于你的设备😢</string>
+    <string name="hint_root_denied_content">抱歉，由于您未授予Root权限或设备没有Root权限，该程序无法正常运行😢</string>
+    <string name="dashboard_enable_title">正在努力运行中！</string>
+    <string name="dashboard_disable_tile">停止了！</string>
+    <string name="setting_day_hint">大于该值，将会退出夜间模式</string>
+    <string name="dashboard_threshold_content">当前设定值（夜间/白天）：</string>
+    <string name="setting_night">夜间阈值</string>
+    <string name="setting_day">白天阈值</string>
+    <string name="setting_night_hint">小于该值，将会进入夜间模式</string>
+    <string name="setting_current_hint">当前外部光强</string>
+    <string name="setting_submit_button">确认！</string>
+    <string name="setting_title">重新设定阈值</string>
+    <string name="setting_value_error">如果夜间阈值高于白天阈值，会坏掉的！</string>
+    <string name="hint_tips_title">一些小提示！</string>
+    <string name="about_content1">致谢：</string>
+    <string name="about_content2">找我玩：</string>
+    <string-array name="hint_tips_content">
+        <item>当前外部光强来自于您手机的光照传感器，请随意的使用它</item>
+        <item>夜间阈值一定不能高于白天阈值！</item>
+        <item>如果只想修改白天或黑夜其中一项的阈值，可以不需要填写另外一项直接提交</item>
+    </string-array>
+</resources>
