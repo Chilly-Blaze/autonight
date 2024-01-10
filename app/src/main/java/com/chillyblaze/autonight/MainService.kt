@@ -1,5 +1,6 @@
 package com.chillyblaze.autonight
 
+import android.app.KeyguardManager
 import android.app.UiModeManager
 import android.app.UiModeManager.MODE_NIGHT_AUTO
 import android.app.UiModeManager.MODE_NIGHT_CUSTOM
@@ -11,6 +12,7 @@ import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.os.IBinder
+import android.os.PowerManager
 import androidx.core.content.getSystemService
 import com.chillyblaze.autonight.model.PersistentData
 import com.chillyblaze.autonight.model.readPersistentData
@@ -26,6 +28,8 @@ class MainService : RootService(), SensorEventListener {
 
     private lateinit var modeManager: UiModeManager
     private lateinit var sensorManager: SensorManager
+    private lateinit var powerManager: PowerManager
+    private lateinit var keyguardManager: KeyguardManager
     private var persistentData = DEFAULT_PERSISTENT_DATA
     private val autoNightService = object : IAutoNightService.Stub() {
         override fun modeSwitch(enable: Boolean) {
@@ -67,6 +71,8 @@ class MainService : RootService(), SensorEventListener {
         persistentData = readPersistentData(persistentData)
         sensorManager = getSystemService<SensorManager>()!!
         modeManager = getSystemService<UiModeManager>()!!
+        powerManager = getSystemService<PowerManager>()!!
+        keyguardManager = getSystemService<KeyguardManager>()!!
     }
 
     override fun onBind(intent: Intent): IBinder {
@@ -75,7 +81,9 @@ class MainService : RootService(), SensorEventListener {
     }
 
     override fun onSensorChanged(event: SensorEvent?) {
-        event?.values?.get(0)?.let { light ->
+        event?.takeIf {
+            powerManager.isInteractive && !keyguardManager.isKeyguardLocked
+        }?.values?.get(0)?.let { light ->
             when (modeManager.nightMode) {
                 MODE_NIGHT_NO -> MODE_NIGHT_YES.takeIf { light < persistentData.night }
                 MODE_NIGHT_YES -> MODE_NIGHT_NO.takeIf { light > persistentData.day }
