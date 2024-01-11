@@ -1,5 +1,6 @@
 package com.chillyblaze.autonight
 
+import android.annotation.SuppressLint
 import android.app.KeyguardManager
 import android.app.UiModeManager
 import android.app.UiModeManager.MODE_NIGHT_AUTO
@@ -56,6 +57,7 @@ class MainService : RootService(), SensorEventListener {
 
     }
 
+    @SuppressLint("WrongConstant")
     private fun sendStateBroadcast() {
         saveConfigurationData(configurationData, true)
         Intent(ACTION_DATA_BROADCAST).apply {
@@ -63,6 +65,8 @@ class MainService : RootService(), SensorEventListener {
             putExtra(NIGHT, configurationData.night)
             putExtra(DAY, configurationData.day)
             putExtra(DELAY, configurationData.delay)
+            // Remove non-protected broadcast error log
+            flags = flags or 0x00400000
             sendBroadcast(this)
         }
     }
