@@ -47,21 +47,21 @@ sealed class ConfigurationContent(
         get() = stateGet()
         set(value) = stateSet(value)
 
-    data object A : ConfigurationContent(
+    data object Night : ConfigurationContent(
         R.string.setting_night,
         R.string.setting_night_hint,
         ::settingNight::get,
         ::settingNight::set
     )
 
-    data object B : ConfigurationContent(
+    data object Day : ConfigurationContent(
         R.string.setting_day,
         R.string.setting_day_hint,
         ::settingDay::get,
         ::settingDay::set
     )
 
-    data object C : ConfigurationContent(
+    data object Delay : ConfigurationContent(
         R.string.setting_delay,
         R.string.setting_delay_hint,
         ::settingDelay::get,
@@ -97,7 +97,9 @@ fun SettingCard(delay: Int) {
                             style = typography.titleMedium
                         )
                     }
-                    ConfigurationContent::class.sealedSubclasses.forEach { InputBox(it.objectInstance!!) }
+                    InputBox(content = ConfigurationContent.Night)
+                    InputBox(content = ConfigurationContent.Day)
+                    InputBox(content = ConfigurationContent.Delay)
                 }
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -127,7 +129,7 @@ private fun InputBox(content: ConfigurationContent) {
         supportingText = {
             Text(text = stringResource(id = content.hint), color = colorScheme.primary)
         },
-        keyboardActions = KeyboardActions{ current.clearFocus(true)},
+        keyboardActions = KeyboardActions { current.clearFocus(true) },
         modifier = Modifier.fillMaxWidth(0.6f)
     )
 }
