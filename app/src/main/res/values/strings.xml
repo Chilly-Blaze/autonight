@@ -8,20 +8,24 @@
     <string name="dashboard_enable_title">Running…</string>
     <string name="dashboard_disable_tile">Stopped</string>
     <string name="setting_day_hint">Above this, exit night mode</string>
-    <string name="dashboard_threshold_content">"Current threshold(Night/Day): "</string>
+    <string name="dashboard_threshold_content">"Current threshold(Night/Day/Delay): "</string>
     <string name="setting_night">Night threshold</string>
     <string name="setting_day">Day threshold</string>
     <string name="setting_night_hint">Below this, enter night mode</string>
     <string name="setting_current_hint">Current light</string>
     <string name="setting_submit_button">Submit!</string>
     <string name="setting_title">Reset threshold</string>
-    <string name="setting_value_error">Night threshold must be less than Day threshold!</string>
+    <string name="setting_value_error1">Night threshold must be less than Day threshold!</string>
     <string name="hint_tips_title">Tips!</string>
     <string-array name="hint_tips_content">
         <item>\"Current light\" get from your phone\'s light sensor, refer to it to set your custom threshold.</item>
         <item>\"Day threshold\" need larger than \"Night threshold\".</item>
-        <item>If you don\'t wish to change the current \"Night\/Day threshold\", leave it blank and submit.</item>
+        <item>If you don\'t wish to change the current threshold setting, leave it blank and submit.</item>
+        <item>Sensor updates every 0.2s. It means you set the \"Delay time\" to 5, Mode will switch 5*0.2=1s after threshold is reached.</item>
     </string-array>
     <string name="about_content1">"Thanks to the following projects: "</string>
     <string name="about_content2">Contact me:</string>
+    <string name="setting_delay">Delay time</string>
+    <string name="setting_delay_hint">Delay when threshold reached</string>
+    <string name="setting_value_error2">All thresholds must be positive and below MAX_INT</string>
 </resources>

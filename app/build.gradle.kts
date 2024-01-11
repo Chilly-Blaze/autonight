@@ -32,6 +32,7 @@ android {
 }
 
 dependencies {
+    implementation(kotlin("reflect"))
     implementation(libs.ktx.core)
     implementation(libs.ktx.runtime)
     implementation(platform(libs.compose.bom))

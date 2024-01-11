@@ -29,18 +29,49 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.chillyblaze.autonight.R
 import com.chillyblaze.autonight.viewmodel.RemoteController
 import com.chillyblaze.autonight.viewmodel.SensorController
-import com.chillyblaze.autonight.viewmodel.ViewStateController
 import com.chillyblaze.autonight.viewmodel.ViewStateController.DelayAnimatedVisibility
+import com.chillyblaze.autonight.viewmodel.ViewStateController.checkNSubmit
+import com.chillyblaze.autonight.viewmodel.ViewStateController.settingDay
+import com.chillyblaze.autonight.viewmodel.ViewStateController.settingDelay
+import com.chillyblaze.autonight.viewmodel.ViewStateController.settingNight
+
+sealed class ConfigurationContent(
+    val label: Int,
+    val hint: Int,
+    private val stateGet: () -> String,
+    private val stateSet: (String) -> Unit
+) {
+    var state: String
+        get() = stateGet()
+        set(value) = stateSet(value)
+
+    data object A : ConfigurationContent(
+        R.string.setting_night,
+        R.string.setting_night_hint,
+        ::settingNight::get,
+        ::settingNight::set
+    )
+
+    data object B : ConfigurationContent(
+        R.string.setting_day,
+        R.string.setting_day_hint,
+        ::settingDay::get,
+        ::settingDay::set
+    )
+
+    data object C : ConfigurationContent(
+        R.string.setting_delay,
+        R.string.setting_delay_hint,
+        ::settingDelay::get,
+        ::settingDelay::set
+    )
+}
 
 @Composable
-fun SettingCard(delay:Int) {
+fun SettingCard(delay: Int) {
     DelayAnimatedVisibility(time = delay) {
         val remoteController: RemoteController = viewModel()
-        val toast = Toast.makeText(
-            LocalContext.current,
-            stringResource(id = R.string.setting_value_error),
-            Toast.LENGTH_LONG
-        )
+        val toast = Toast(LocalContext.current).apply { duration = Toast.LENGTH_LONG }
         ElevatedCard(
             colors = CardDefaults.cardColors(colorScheme.surface),
             modifier = Modifier
@@ -64,16 +95,7 @@ fun SettingCard(delay:Int) {
                             style = typography.titleMedium
                         )
                     }
-                    InputBox(
-                        state = ViewStateController.settingNight,
-                        onChange = { ViewStateController.settingNight = it },
-                        content = DayNight.Night
-                    )
-                    InputBox(
-                        state = ViewStateController.settingDay,
-                        onChange = { ViewStateController.settingDay = it },
-                        content = DayNight.Day
-                    )
+                    ConfigurationContent::class.sealedSubclasses.forEach { InputBox(it.objectInstance!!) }
                 }
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -81,20 +103,7 @@ fun SettingCard(delay:Int) {
                 ) {
                     CurrentBox()
                     Spacer(modifier = Modifier.height(5.dp))
-                    Button(onClick = {
-                        remoteController.apply {
-                            val night = ViewStateController.settingNight.toIntOrNull()
-                                ?: persistentData.night
-                            val day = ViewStateController.settingDay.toIntOrNull()
-                                ?: persistentData.day
-                            if (night > day) toast.show()
-                            else if (night != persistentData.night || day != persistentData.day) {
-                                ViewStateController.settingNight = ""
-                                ViewStateController.settingDay = ""
-                                submitThreshold(night, day)
-                            }
-                        }
-                    }) {
+                    Button(onClick = { checkNSubmit(remoteController, toast) }) {
                         Text(text = stringResource(id = R.string.setting_submit_button))
                     }
                 }
@@ -103,17 +112,12 @@ fun SettingCard(delay:Int) {
     }
 }
 
-sealed class DayNight(val label: Int, val hint: Int) {
-    data object Day : DayNight(R.string.setting_day, R.string.setting_day_hint)
-    data object Night : DayNight(R.string.setting_night, R.string.setting_night_hint)
-}
-
 @Composable
-private fun InputBox(state: String, onChange: (String) -> Unit, content: DayNight) {
+private fun InputBox(content: ConfigurationContent) {
     OutlinedTextField(
-        value = state,
+        value = content.state,
         textStyle = typography.bodyMedium,
-        onValueChange = onChange,
+        onValueChange = content::state::set,
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
         label = { Text(text = stringResource(id = content.label)) },
         singleLine = true,

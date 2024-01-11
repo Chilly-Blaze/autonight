@@ -8,20 +8,24 @@
     <string name="dashboard_enable_title">正在努力运行中！</string>
     <string name="dashboard_disable_tile">停止了！</string>
     <string name="setting_day_hint">大于该值，将会退出夜间模式</string>
-    <string name="dashboard_threshold_content">当前设定值（夜间/白天）：</string>
+    <string name="dashboard_threshold_content">当前设定值（夜间/白天/延迟）：</string>
     <string name="setting_night">夜间阈值</string>
     <string name="setting_day">白天阈值</string>
     <string name="setting_night_hint">小于该值，将会进入夜间模式</string>
     <string name="setting_current_hint">当前外部光强</string>
     <string name="setting_submit_button">确认！</string>
     <string name="setting_title">重新设定阈值</string>
-    <string name="setting_value_error">如果夜间阈值高于白天阈值，会坏掉的！</string>
+    <string name="setting_value_error2">请……请不要再输入非32位正整数了♡</string>
+    <string name="setting_value_error1">如果夜间阈值高于白天阈值，会坏掉的！</string>
     <string name="hint_tips_title">一些小提示！</string>
     <string name="about_content1">致谢：</string>
     <string name="about_content2">找我玩：</string>
     <string-array name="hint_tips_content">
-        <item>当前外部光强来自于您手机的光照传感器，请随意的使用它</item>
-        <item>夜间阈值一定不能高于白天阈值！</item>
-        <item>如果只想修改白天或黑夜其中一项的阈值，可以不需要填写另外一项直接提交</item>
+        <item>「当前外部光强」来自于手机的光照传感器，请随意的使用它~</item>
+        <item>「夜间阈值」一定不能高于「白天阈值」！</item>
+        <item>如果只想修改其中一项的阈值，可以不需要填写其他项直接「确认！」</item>
+        <item>传感器每0.2s更新一次数据，当「切换延迟」设置为5时，模式会在达到阈值5*0.2=1秒后切换</item>
     </string-array>
+    <string name="setting_delay">切换延迟</string>
+    <string name="setting_delay_hint">达到阈值时，多久切换</string>
 </resources>

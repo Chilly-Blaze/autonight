@@ -5,12 +5,14 @@ import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.os.IBinder
+import android.util.Log
 import com.chillyblaze.autonight.IAutoNightService
 import com.chillyblaze.autonight.MainService
 import com.topjohnwu.superuser.Shell
 import com.topjohnwu.superuser.ipc.RootService
 
 
+fun ld(s: String) = Log.d("AutoNightDebug", s)
 fun hasNull(vararg args: Any?) = args.filterNotNull().size != args.size
 fun grantedRoot() = run { Shell.getShell(); Shell.isAppGrantedRoot() } ?: false
 fun Context.rpc(callback: IAutoNightService.() -> Unit) {

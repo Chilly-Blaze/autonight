@@ -1,15 +1,16 @@
 package com.chillyblaze.autonight.tools
 
-import com.chillyblaze.autonight.model.PersistentData
+import com.chillyblaze.autonight.model.ConfigurationData
 
 const val ACTION_DATA_BROADCAST = "com.chillyblaze.autonight.action.DATA_BROADCAST"
-val DEFAULT_PERSISTENT_DATA = PersistentData(false, 50, 200)
+val DEFAULT_CONFIGURATION_DATA = ConfigurationData(false, 50, 200,5)
 const val SHARED_PREFERENCES_NAME = "data"
 
-object PersistentState {
+object ConfigurationState {
     const val ENABLE = "enable"
     const val NIGHT = "night"
     const val DAY = "day"
+    const val DELAY = "delay"
 }
 
 enum class EnvState {

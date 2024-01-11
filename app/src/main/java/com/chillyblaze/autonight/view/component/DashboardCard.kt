@@ -55,7 +55,8 @@ sealed class Switch(val title: Int) {
 fun DashboardCard(delay: Int) {
     DelayAnimatedVisibility(time = delay) {
         val remoteController = viewModel<RemoteController>()
-        val switch = if (remoteController.persistentData.enable) Switch.Enable else Switch.Disable
+        val switch =
+            if (remoteController.configurationData.enable) Switch.Enable else Switch.Disable
         ElevatedCard(
             modifier = Modifier
                 .fillMaxWidth()
@@ -81,7 +82,9 @@ fun DashboardCard(delay: Int) {
                     ) {
                         Text(
                             text = stringResource(id = R.string.dashboard_threshold_content) +
-                                    "${remoteController.persistentData.night}/${remoteController.persistentData.day}",
+                                    "${remoteController.configurationData.night}/" +
+                                    "${remoteController.configurationData.day}/" +
+                                    "${remoteController.configurationData.delay}",
                             style = typography.bodyMedium,
                             fontStyle = FontStyle.Italic,
                             modifier = Modifier.padding(10.dp, 2.dp)

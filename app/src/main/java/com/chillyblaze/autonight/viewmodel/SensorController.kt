@@ -34,5 +34,5 @@ object SensorController : SensorEventListener {
         currentLight = event?.values?.get(0) ?: -1f
     }
 
-    override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
+    override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) = Unit
 }

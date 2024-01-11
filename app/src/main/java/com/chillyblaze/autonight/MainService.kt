@@ -14,14 +14,15 @@ import android.hardware.SensorManager
 import android.os.IBinder
 import android.os.PowerManager
 import androidx.core.content.getSystemService
-import com.chillyblaze.autonight.model.PersistentData
-import com.chillyblaze.autonight.model.readPersistentData
-import com.chillyblaze.autonight.model.savePersistentData
+import com.chillyblaze.autonight.model.ConfigurationData
+import com.chillyblaze.autonight.model.readConfigurationData
+import com.chillyblaze.autonight.model.saveConfigurationData
 import com.chillyblaze.autonight.tools.ACTION_DATA_BROADCAST
-import com.chillyblaze.autonight.tools.DEFAULT_PERSISTENT_DATA
-import com.chillyblaze.autonight.tools.PersistentState.DAY
-import com.chillyblaze.autonight.tools.PersistentState.ENABLE
-import com.chillyblaze.autonight.tools.PersistentState.NIGHT
+import com.chillyblaze.autonight.tools.ConfigurationState.DAY
+import com.chillyblaze.autonight.tools.ConfigurationState.DELAY
+import com.chillyblaze.autonight.tools.ConfigurationState.ENABLE
+import com.chillyblaze.autonight.tools.ConfigurationState.NIGHT
+import com.chillyblaze.autonight.tools.DEFAULT_CONFIGURATION_DATA
 import com.topjohnwu.superuser.ipc.RootService
 
 class MainService : RootService(), SensorEventListener {
@@ -30,30 +31,38 @@ class MainService : RootService(), SensorEventListener {
     private lateinit var sensorManager: SensorManager
     private lateinit var powerManager: PowerManager
     private lateinit var keyguardManager: KeyguardManager
-    private var persistentData = DEFAULT_PERSISTENT_DATA
+    private var configurationData = DEFAULT_CONFIGURATION_DATA
+    private var delayCounts = configurationData.delay
     private val autoNightService = object : IAutoNightService.Stub() {
         override fun modeSwitch(enable: Boolean) {
             if (enable) registerListener() else unregisterListener()
-            persistentData.enable = enable
+            configurationData.enable = enable
             sendStateBroadcast()
         }
 
         override fun setThreshold(night: Int, day: Int) {
-            persistentData.night = night
-            persistentData.day = day
+            configurationData.night = night
+            configurationData.day = day
             sendStateBroadcast()
         }
 
-        override fun getState(): PersistentData = persistentData
+        override fun setDelay(delay: Int) {
+            configurationData.delay = delay
+            delayCounts = delay
+            sendStateBroadcast()
+        }
+
+        override fun getState(): ConfigurationData = configurationData
 
     }
 
     private fun sendStateBroadcast() {
-        savePersistentData(persistentData, true)
+        saveConfigurationData(configurationData, true)
         Intent(ACTION_DATA_BROADCAST).apply {
-            putExtra(ENABLE, persistentData.enable)
-            putExtra(NIGHT, persistentData.night)
-            putExtra(DAY, persistentData.day)
+            putExtra(ENABLE, configurationData.enable)
+            putExtra(NIGHT, configurationData.night)
+            putExtra(DAY, configurationData.day)
+            putExtra(DELAY, configurationData.delay)
             sendBroadcast(this)
         }
     }
@@ -68,7 +77,8 @@ class MainService : RootService(), SensorEventListener {
 
     override fun onCreate() {
         super.onCreate()
-        persistentData = readPersistentData(persistentData)
+        configurationData = readConfigurationData(configurationData)
+        delayCounts = configurationData.delay
         sensorManager = getSystemService<SensorManager>()!!
         modeManager = getSystemService<UiModeManager>()!!
         powerManager = getSystemService<PowerManager>()!!
@@ -76,30 +86,31 @@ class MainService : RootService(), SensorEventListener {
     }
 
     override fun onBind(intent: Intent): IBinder {
-        if (persistentData.enable) registerListener()
+        if (configurationData.enable) registerListener()
         return autoNightService
     }
 
     override fun onSensorChanged(event: SensorEvent?) {
-        event?.takeIf {
+        event?.values?.takeIf {
             powerManager.isInteractive && !keyguardManager.isKeyguardLocked
-        }?.values?.get(0)?.let { light ->
+        }?.get(0)?.let { light ->
+            fun Int?.delayJudge(willing: Boolean) = takeIf {
+                (if (willing) delayCounts - 1 else configurationData.delay).also(::delayCounts::set) == -1
+            }
             when (modeManager.nightMode) {
-                MODE_NIGHT_NO -> MODE_NIGHT_YES.takeIf { light < persistentData.night }
-                MODE_NIGHT_YES -> MODE_NIGHT_NO.takeIf { light > persistentData.day }
-                MODE_NIGHT_AUTO, MODE_NIGHT_CUSTOM ->
-                    MODE_NIGHT_YES.takeIf { light > persistentData.night } ?: MODE_NIGHT_NO
-
+                MODE_NIGHT_NO -> MODE_NIGHT_YES.delayJudge(light < configurationData.night)
+                MODE_NIGHT_YES -> MODE_NIGHT_NO.delayJudge(light > configurationData.day)
+                MODE_NIGHT_AUTO, MODE_NIGHT_CUSTOM -> if (light > configurationData.night) MODE_NIGHT_YES else MODE_NIGHT_NO
                 else -> null
-            }?.let(modeManager::setNightMode)
+            }?.let(modeManager::setNightMode)?.also { delayCounts = configurationData.delay }
         }
     }
 
-    override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
+    override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) = Unit
 
     override fun onDestroy() {
         sensorManager.unregisterListener(this)
-        savePersistentData(persistentData)
+        saveConfigurationData(configurationData)
         super.onDestroy()
     }
 }

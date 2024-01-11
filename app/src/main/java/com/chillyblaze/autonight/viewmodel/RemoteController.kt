@@ -11,13 +11,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
-import com.chillyblaze.autonight.model.PersistentData
+import com.chillyblaze.autonight.model.ConfigurationData
 import com.chillyblaze.autonight.tools.ACTION_DATA_BROADCAST
-import com.chillyblaze.autonight.tools.DEFAULT_PERSISTENT_DATA
+import com.chillyblaze.autonight.tools.DEFAULT_CONFIGURATION_DATA
 import com.chillyblaze.autonight.tools.EnvState
-import com.chillyblaze.autonight.tools.PersistentState.DAY
-import com.chillyblaze.autonight.tools.PersistentState.ENABLE
-import com.chillyblaze.autonight.tools.PersistentState.NIGHT
+import com.chillyblaze.autonight.tools.ConfigurationState.DAY
+import com.chillyblaze.autonight.tools.ConfigurationState.DELAY
+import com.chillyblaze.autonight.tools.ConfigurationState.ENABLE
+import com.chillyblaze.autonight.tools.ConfigurationState.NIGHT
 import com.chillyblaze.autonight.tools.grantedRoot
 import com.chillyblaze.autonight.tools.rpc
 import kotlinx.coroutines.CoroutineScope
@@ -27,14 +28,15 @@ import kotlinx.coroutines.withContext
 
 class RemoteController(application: Application) : AndroidViewModel(application) {
 
-    var persistentData by mutableStateOf(DEFAULT_PERSISTENT_DATA)
+    var configurationData by mutableStateOf(DEFAULT_CONFIGURATION_DATA)
     private val receiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             intent?.apply {
-                persistentData = PersistentData(
-                    getBooleanExtra(ENABLE, persistentData.enable),
-                    getIntExtra(NIGHT, persistentData.night),
-                    getIntExtra(DAY, persistentData.day)
+                configurationData = ConfigurationData(
+                    getBooleanExtra(ENABLE, configurationData.enable),
+                    getIntExtra(NIGHT, configurationData.night),
+                    getIntExtra(DAY, configurationData.day),
+                    getIntExtra(DELAY, configurationData.delay)
                 )
             }
         }
@@ -57,17 +59,16 @@ class RemoteController(application: Application) : AndroidViewModel(application)
         registerReceiver()
         CoroutineScope(Dispatchers.IO).launch {
             if (grantedRoot()) {
-                withContext(Dispatchers.Main) { context().rpc { persistentData = state } }
+                withContext(Dispatchers.Main) { context().rpc { configurationData = state } }
                 ViewStateController.envCheck = EnvState.SUCCESS
             } else ViewStateController.envCheck = EnvState.ROOT_DENIED
         }
     }
 
-    fun unbind() {
-        context().unregisterReceiver(receiver)
-    }
+    fun unbind() = context().unregisterReceiver(receiver)
 
-    fun submitThreshold(night: Int, day: Int) = context().rpc { setThreshold(night, day) }
+    fun submitSettings(night: Int, day: Int, delay: Int) =
+        context().rpc { setThreshold(night, day); setDelay(delay) }
+
     fun modeSwitch(enable: Boolean) = context().rpc { modeSwitch(enable) }
-
 }

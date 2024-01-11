@@ -11,7 +11,7 @@ import android.service.quicksettings.Tile.STATE_INACTIVE
 import android.service.quicksettings.Tile.STATE_UNAVAILABLE
 import android.service.quicksettings.TileService
 import com.chillyblaze.autonight.tools.ACTION_DATA_BROADCAST
-import com.chillyblaze.autonight.tools.PersistentState.ENABLE
+import com.chillyblaze.autonight.tools.ConfigurationState.ENABLE
 import com.chillyblaze.autonight.tools.rpc
 import com.topjohnwu.superuser.Shell
 
